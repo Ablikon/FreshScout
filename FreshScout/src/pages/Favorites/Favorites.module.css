@@ -1,176 +1,23 @@
-:root{
-  --cart-w: 280px;
-  --topbar-h: 96px;
-}
-
-/* Страница */
 .page {
-  position: relative;
-  height: calc(100vh - var(--app-header-h));
-  overflow: visible; 
-  background: rgba(255, 255, 255, 0.65);
-}
-
-
-/* ===== TOPBAR ===== */
-.topbar {
-  position: absolute;
-  left: 0;
-  right: var(--cart-w);
-  top: 0;
-  height: var(--topbar-h);
-  z-index: 10;
-  padding: 18px 24px 0;
-  background: rgba(255, 255, 255, 0.75);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
-
-.titleRow {
-  max-width: 1200px;
+  max-width: var(--max-width);
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 320px auto auto;
-  align-items: center;
-  gap: 16px;
+  padding: var(--space-xl) var(--space-2xl);
 }
 
-.info {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--muted);
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  margin-bottom: var(--space-xl);
 }
 
-/* ===== CONTENT ===== */
-.content {
-  position: absolute;
-  left: 0;
-  right: var(--cart-w);
-  top: var(--topbar-h);
-  bottom: 0;
-  overflow: hidden;
-  padding: 0 24px;
-  background: rgba(255, 255, 255, 0.65);
-}
-
-.contentScroll {
-  height: 100%;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 18px 0;
-  -webkit-overflow-scrolling: touch;
-}
-
-.contentScroll::-webkit-scrollbar { width: 6px; }
-.contentScroll::-webkit-scrollbar-track { background: transparent; }
-.contentScroll::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.10);
-  border-radius: 6px;
-}
-.contentScroll::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.18); }
-
-/* Grid */
-.grid {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-/* Empty states */
 .empty {
-  max-width: 520px;
-  margin: 80px auto;
-  padding: 24px;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(15, 23, 42, 0.08);
   text-align: center;
+  padding: var(--space-3xl);
+  color: var(--color-text-secondary);
 }
 
-.emptyIcon {
-  font-size: 36px;
-  margin-bottom: 12px;
-}
-
-.emptyTitle {
-  font-weight: 900;
-  font-size: 18px;
-  margin-bottom: 6px;
-}
-
-.emptyText {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.35;
-}
-
-/* ===== ADAPTIVE ===== */
-@media (max-width: 1400px) {
-  :root { --cart-w: 220px; }
-
-  .topbar, .content {
-    right: var(--cart-w);
-  }
-
-  .grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 16px;
-  }
-}
-
-@media (max-width: 1200px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .titleRow {
-    grid-template-columns: 1fr 300px auto auto;
-  }
-}
-
-@media (max-width: 992px) {
-  /* На мобилке делаем нормальную колонку как в каталоге */
-  .page {
-    display: flex;
-    flex-direction: column;
-    height: auto;
-    overflow: visible;
-  }
-
-  .topbar, .content {
-    position: static;
-    width: 100%;
-    right: auto;
-    left: auto;
-    padding: 18px 20px;
-  }
-
-  .topbar {
-    height: auto;
-    padding-bottom: 14px;
-  }
-
-  .content {
-    overflow: visible;
-    padding-top: 0;
-  }
-
-  .contentScroll {
-    overflow: visible;
-    padding: 0;
-  }
-
-  .titleRow {
-    max-width: 1200px;
-    grid-template-columns: 1fr;
-    gap: 12px;
-    align-items: stretch;
-  }
-}
-
-@media (max-width: 768px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
+.emoji {
+  font-size: 48px;
+  display: block;
+  margin-bottom: var(--space-md);
 }

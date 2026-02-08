@@ -1,7 +1,9 @@
-import { Router } from "express";
-import { requestCode, verifyCode } from "../controllers/auth.controller.js";
+import { Router } from 'express';
+import { sendOtpHandler, verifyOtpHandler } from '../controllers/auth.controller.js';
 
 const router = Router();
-router.post("/request-code", requestCode);
-router.post("/verify-code", verifyCode);
+
+router.post('/send-otp', sendOtpHandler);
+router.post('/verify-otp', verifyOtpHandler);
+
 export default router;

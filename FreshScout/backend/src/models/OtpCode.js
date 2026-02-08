@@ -1,15 +1,11 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const OtpCodeSchema = new mongoose.Schema(
-  {
-    phone: { type: String, index: true, required: true },
-    codeHash: { type: String, required: true },
-    attemptsLeft: { type: Number, default: 5 },
-    expiresAt: { type: Date, required: true },
-  },
-  { timestamps: true }
-);
+const otpSchema = new mongoose.Schema({
+  phone: { type: String, required: true },
+  codeHash: { type: String, required: true },
+  attemptsLeft: { type: Number, default: 3 },
+  createdAt: { type: Date, default: Date.now, expires: 300 }, // TTL 5 min
+});
 
-OtpCodeSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-
-export default mongoose.model("OtpCode", OtpCodeSchema);
+const OtpCode = mongoose.model('OtpCode', otpSchema);
+export default OtpCode;

@@ -1,0 +1,22 @@
+.page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: var(--space-xl);
+}
+
+.title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin-bottom: var(--space-xl);
+}
+
+.empty {
+  text-align: center;
+  padding: var(--space-3xl);
+  color: var(--color-text-secondary);
+}
+
+.emptyIcon {
+  font-size: 64px;
+  margin-bottom: var(--space-lg);
+}

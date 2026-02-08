@@ -1,7 +1,7 @@
-export async function sendSms(phone, text) {
-  if (process.env.OTP_DEV_MODE === "true") {
-    console.log(`📩 [DEV SMS] ${phone}: ${text}`);
-    return;
-  }
-  throw new Error("SMS provider not configured");
+// SMS service - dev mode just logs OTP to console
+export function sendOtp(phone, code) {
+  console.log(`📱 OTP for ${phone}: ${code}`);
+  return Promise.resolve({ success: true });
 }
+
+export default { sendOtp };

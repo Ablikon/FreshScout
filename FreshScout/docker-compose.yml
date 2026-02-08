@@ -1,0 +1,47 @@
+services:
+  # ── MongoDB ──
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Backend API ──
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      MONGODB_URI: mongodb://mongo:27017/freshscout
+      JWT_SECRET: ${JWT_SECRET:-freshscout_jwt_secret_2026_very_secure_key}
+      DATA_API_URL: ${DATA_API_URL:-http://94.131.88.146:3000}
+      DATA_API_TOKEN: ${DATA_API_TOKEN:-7e248c0f2ddbe71f1d2339c731d0c5d5954e647a2c000e96d696c3f78acfb2d5}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
+      SYNC_INTERVAL_HOURS: ${SYNC_INTERVAL_HOURS:-6}
+
+  # ── Frontend (nginx) ──
+  frontend:
+    build:
+      context: .
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+volumes:
+  mongo_data:

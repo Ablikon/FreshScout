@@ -1,14 +1,19 @@
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 
-export function requireAuth(req, res, next) {
-  const h = req.headers.authorization || "";
-  const token = h.startsWith("Bearer ") ? h.slice(7) : null;
-  if (!token) return res.status(401).json({ message: "No token" });
+export function authMiddleware(req, res, next) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Токен не предоставлен' });
+  }
 
   try {
-    req.user = jwt.verify(token, process.env.JWT_SECRET);
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = decoded.userId;
     next();
   } catch {
-    return res.status(401).json({ message: "Invalid token" });
+    return res.status(401).json({ error: 'Невалидный токен' });
   }
 }
+
+export default authMiddleware;

@@ -1,84 +1,23 @@
-import { useMemo, useState } from "react";
-import styles from "./Favorites.module.css";
-import { PRODUCTS, STORES } from "../../mocks/products.js";
-import ProductCard from "../../components/ProductCard/ProductCard.jsx";
-import SearchBar from "../../components/SearchBar/SearchBar.jsx";
-import StoreBar from "../../components/StoreBar/StoreBar.jsx";
-import CartSidebar from "../../components/CartSidebar/CartSidebar.jsx";
-import Button from "../../components/Ui/Button.jsx";
-import { Icon } from "../../components/Ui/Icon.jsx";
-import { useFavorites } from "../../store/favoritesStore.js";
+import { favoritesStore } from '../../store';
+import Icon from '../../components/Icon/Icon';
+import ProductGrid from '../../components/ProductGrid/ProductGrid';
+import s from './Favorites.module.css';
 
-export default function Favorites() {
-  const fav = useFavorites();
-  const [q, setQ] = useState("");
-  const [storeId, setStoreId] = useState(null);
-
-  const items = useMemo(() => {
-    const qn = q.trim().toLowerCase();
-    const idsSet = new Set(fav.ids);
-
-    return PRODUCTS.filter((p) => {
-      const isFav = idsSet.has(p.id);
-      const okStore = storeId ? p.stores?.includes(storeId) : true;
-      const okQ = qn ? p.title.toLowerCase().includes(qn) : true;
-      return isFav && okStore && okQ;
-    });
-  }, [fav.ids, q, storeId]);
+export default function FavoritesPage() {
+  const favorites = favoritesStore.useStore(st => st.items);
 
   return (
-    <div className={styles.page}>
-      <div className={styles.topbar}>
-        <div className={styles.titleRow}>
-          <div className={styles.info}>Сохранённые товары — {fav.count}</div>
-
-          <SearchBar
-            value={q}
-            onChange={setQ}
-            placeholder="Искать в избранном"
-          />
-
-          <StoreBar stores={STORES} value={storeId} onChange={setStoreId} />
-
-          <Button
-            variant="ghost"
-            onClick={() => fav.clear()}
-            disabled={fav.count === 0}
-            leftIcon={<Icon name="star" />}
-          >
-            Очистить
-          </Button>
+    <div className={s.page}>
+      <h1 className={s.title}><Icon name="heart" size={24} style={{ marginRight: 8 }} /> Избранное ({favorites.length})</h1>
+      {favorites.length === 0 ? (
+        <div className={s.empty}>
+          <Icon name="heart" size={48} style={{ opacity: 0.3 }} />
+          <h2>Нет избранных товаров</h2>
+          <p>Нажмите на сердце на карточке товара, чтобы добавить в избранное</p>
         </div>
-      </div>
-
-      <div className={styles.content}>
-        <div className={styles.contentScroll}>
-          {fav.count === 0 ? (
-            <div className={styles.empty}>
-              <div className={styles.emptyIcon}>⭐</div>
-              <div className={styles.emptyTitle}>Пока пусто</div>
-              <div className={styles.emptyText}>
-                Добавь товары в избранное — и они появятся здесь.
-              </div>
-            </div>
-          ) : items.length === 0 ? (
-            <div className={styles.empty}>
-              <div className={styles.emptyIcon}>🔎</div>
-              <div className={styles.emptyTitle}>Ничего не найдено</div>
-              <div className={styles.emptyText}>
-                Попробуй изменить поиск или магазин.
-              </div>
-            </div>
-          ) : (
-            <div className={styles.grid}>
-              {items.map((p) => (
-                <ProductCard key={p.id} p={p} />
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-      <CartSidebar />
+      ) : (
+        <ProductGrid products={favorites} loading={false} />
+      )}
     </div>
   );
 }

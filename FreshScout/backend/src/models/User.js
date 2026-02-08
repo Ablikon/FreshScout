@@ -1,11 +1,13 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-const UserSchema = new mongoose.Schema(
-  {
-    phone: { type: String, unique: true, required: true }, 
-    createdAt: { type: Date, default: Date.now }
-  },
-  { timestamps: true }
-);
+const userSchema = new mongoose.Schema({
+  phone: { type: String, required: true, unique: true },
+  name: { type: String, default: '' },
+  city: { type: String, default: 'almaty' },
+  favorites: [{ type: String }],  // product IDs
+}, {
+  timestamps: true,
+});
 
-export default mongoose.model("User", UserSchema);
+const User = mongoose.model('User', userSchema);
+export default User;
