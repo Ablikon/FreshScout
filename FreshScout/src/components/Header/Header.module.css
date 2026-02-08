@@ -1,0 +1,125 @@
+.header {
+  min-height: var(--app-header-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 24px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 1000; 
+}
+
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 160px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  color: #000;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--muted);
+  opacity: 0.7;
+}
+
+.center {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 350px;
+}
+
+.search {
+  width: 100%;
+  max-width: 350px;
+}
+
+.address {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 15px;
+  background: rgba(30, 102, 255, 0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.address:hover {
+  background: rgba(30, 101, 255, 0.442)
+}
+
+.locationIcon {
+  color: var(--primary);
+  opacity: 0.8;
+}
+
+.addressText {
+  font-size: 13px;
+  color: #000;
+  opacity: 0.9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 220px;
+  justify-content: flex-end;
+}
+
+.loginBtn {
+  background: rgba(0, 0, 0, 0.05);
+  color: #000;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.loginBtn:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .header {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+  
+  .center {
+    order: 3;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 8px;
+  }
+  
+  .search {
+    max-width: 100%;
+  }
+  
+  .right {
+    min-width: auto;
+  }
+  
+  .addressText {
+    max-width: 150px;
+  }
+}

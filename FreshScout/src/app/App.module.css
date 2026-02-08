@@ -1,0 +1,13 @@
+:root {
+  --bg: #0f122b;
+  --primary: #242582;
+  --accent: #F64C72;
+  --muted: #99738E;
+  --text: rgba(255,255,255,0.95);
+}
+
+.appRoot {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
