@@ -17,6 +17,14 @@ export default function CartDrawer() {
 
   const total = items.reduce((sum, i) => sum + i.cost * i.quantity, 0);
 
+  // Calculate savings: discount + cross-store
+  const worstCaseTotal = items.reduce((sum, i) => {
+    const prev = (i.prevCost && i.prevCost > i.cost) ? i.prevCost : i.cost;
+    const worst = i.maxPrice ? Math.max(prev, i.maxPrice) : prev;
+    return sum + worst * i.quantity;
+  }, 0);
+  const totalSavings = worstCaseTotal - total;
+
   // Group by store
   const byStore = {};
   for (const item of items) {
@@ -92,6 +100,15 @@ export default function CartDrawer() {
                     <span>{st.subtotal.toLocaleString()} ₸</span>
                   </div>
                 ))}
+              </div>
+            )}
+            {totalSavings > 0 && (
+              <div className={s.savingsRow}>
+                <span className={s.savingsLabel}>
+                  <Icon name="trending-up" size={14} />
+                  Экономия
+                </span>
+                <span className={s.savingsValue}>−{totalSavings.toLocaleString()} ₸</span>
               </div>
             )}
             <div className={s.totalRow}>

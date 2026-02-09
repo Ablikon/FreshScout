@@ -91,9 +91,35 @@ export async function syncAllProducts() {
 
       if (rawProducts.length === 0) continue;
 
-      // Normalize all products
-      const normalized = rawProducts
-        .filter(p => p.title && p.cost >= 50) // filter out invalid + suspiciously cheap items (price per unit noise)
+      // ── Data quality filter ──
+      // Kazakhstan tenge has NO fractional unit — any decimal price is
+      // from a merchant sending prices in wrong units (÷100).
+      // Additionally, Wolt / Airba have many integer prices that are also
+      // wrong (e.g. 125₸ for a 12,500₸ product), so we raise their minimum.
+      const hasQuirkyPricing = sourceId.startsWith('wolt') || sourceId.startsWith('airba');
+      const minPrice = hasQuirkyPricing ? 200 : 50;
+
+      const cleaned = rawProducts.filter(p => {
+        if (!p.title || !p.cost) return false;
+        const cost = Number(p.cost);
+        if (cost < minPrice) return false;
+        // Reject ANY decimal price — tenge is the smallest unit
+        if (cost !== Math.floor(cost)) return false;
+        return true;
+      });
+
+      // Deduplicate by normalized title: keep highest price per title
+      // (merchants with correct pricing report realistic prices)
+      const dedupMap = new Map();
+      for (const p of cleaned) {
+        const key = (p.title || '').toLowerCase().replace(/\s+/g, ' ').trim();
+        const existing = dedupMap.get(key);
+        if (!existing || Number(p.cost) > Number(existing.cost)) {
+          dedupMap.set(key, p);
+        }
+      }
+
+      const normalized = [...dedupMap.values()]
         .map(p => normalizeProduct(p, sourceId));
 
       // Bulk upsert: delete old data for this source, insert new

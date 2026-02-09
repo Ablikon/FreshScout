@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fetchCategories } from '../../api';
 import { cityStore } from '../../store';
@@ -10,8 +10,7 @@ export default function CategoryBar() {
   const city = cityStore.useStore(st => st.city);
   const [categories, setCategories] = useState([]);
   const scrollRef = useRef(null);
-  const animRef = useRef(null);
-  const pausedRef = useRef(false);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     fetchCategories(city)
@@ -19,30 +18,25 @@ export default function CategoryBar() {
       .catch(() => {});
   }, [city]);
 
-  // Auto-scroll animation
+  // Manual JS scroll animation using interval — most reliable approach
   useEffect(() => {
     const el = scrollRef.current;
-    if (!el) return;
+    if (!el || categories.length === 0) return;
 
-    let speed = 0.4; // px per frame
-
-    const tick = () => {
-      if (!pausedRef.current && el.scrollWidth > el.clientWidth) {
-        el.scrollLeft += speed;
-        // Loop: if scrolled to end, jump back to start
-        if (el.scrollLeft >= el.scrollWidth - el.clientWidth - 1) {
-          el.scrollLeft = 0;
-        }
+    const intervalId = setInterval(() => {
+      if (el.scrollWidth <= el.clientWidth) return; // no overflow
+      if (el.matches(':hover')) return; // paused on hover
+      el.scrollLeft += 1;
+      if (el.scrollLeft >= el.scrollWidth - el.clientWidth) {
+        el.scrollLeft = 0;
       }
-      animRef.current = requestAnimationFrame(tick);
-    };
+    }, 30);
 
-    animRef.current = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(animRef.current);
+    return () => clearInterval(intervalId);
   }, [categories]);
 
-  const handleEnter = () => { pausedRef.current = true; };
-  const handleLeave = () => { pausedRef.current = false; };
+  const handleEnter = useCallback(() => setPaused(true), []);
+  const handleLeave = useCallback(() => setPaused(false), []);
 
   if (!categories || categories.length === 0) return null;
 

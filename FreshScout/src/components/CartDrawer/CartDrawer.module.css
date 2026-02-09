@@ -186,7 +186,33 @@
 }
 
 .storeBreakdown {
-  margin-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
+}
+
+/* Savings row in drawer */
+.savingsRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  background: #e8f5e9;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-md);
+}
+
+.savingsLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: #2e7d32;
+}
+
+.savingsValue {
+  font-size: var(--font-size-md);
+  font-weight: 800;
+  color: var(--color-secondary);
 }
 
 .storeRow {

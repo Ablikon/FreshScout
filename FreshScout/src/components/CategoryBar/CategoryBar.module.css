@@ -2,6 +2,7 @@
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border-light);
   overflow: hidden;
+  position: relative;
 }
 
 .inner {
