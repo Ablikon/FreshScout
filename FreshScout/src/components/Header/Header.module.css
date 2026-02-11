@@ -149,6 +149,51 @@
   font-size: var(--font-size-md);
 }
 
+/* Login / User buttons */
+.loginBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.loginBtn:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.userBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: var(--space-sm) var(--space-lg);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  max-width: 140px;
+}
+
+.userBtn:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-danger);
+}
+
+.userName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @media (max-width: 768px) {
   .inner {
     padding: 0 var(--space-lg);
@@ -173,6 +218,14 @@
   }
 
   .cartTotal {
+    display: none;
+  }
+
+  .userName {
+    display: none;
+  }
+
+  .loginBtn span {
     display: none;
   }
 }

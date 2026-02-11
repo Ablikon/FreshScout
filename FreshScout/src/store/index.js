@@ -153,3 +153,24 @@ export function toggleFavorite(product) {
 export function isFavorite(productId) {
   return favoritesStore.getState().items.some(i => i._id === productId);
 }
+
+// ── Auth Store ──
+const savedToken = localStorage.getItem('token') || null;
+const savedUser = JSON.parse(localStorage.getItem('user') || 'null');
+
+export const authStore = createStore({
+  token: savedToken,
+  user: savedUser,
+});
+
+export function login(token, user) {
+  localStorage.setItem('token', token);
+  localStorage.setItem('user', JSON.stringify(user));
+  authStore.setState({ token, user });
+}
+
+export function logout() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  authStore.setState({ token: null, user: null });
+}

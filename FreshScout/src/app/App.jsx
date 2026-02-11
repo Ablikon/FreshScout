@@ -7,6 +7,8 @@ import Cart from '../pages/Cart/Cart';
 import Search from '../pages/Search/Search';
 import Favorites from '../pages/Favorites/Favorites';
 import Login from '../pages/Login/Login';
+import Checkout from '../pages/Checkout/Checkout';
+import Orders from '../pages/Orders/Orders';
 import NotFound from '../pages/NotFound/NotFound';
 
 export default function App() {
@@ -17,6 +19,8 @@ export default function App() {
         <Route path="category/:slug" element={<Category />} />
         <Route path="product/:id" element={<Product />} />
         <Route path="cart" element={<Cart />} />
+        <Route path="checkout" element={<Checkout />} />
+        <Route path="orders" element={<Orders />} />
         <Route path="search" element={<Search />} />
         <Route path="favorites" element={<Favorites />} />
         <Route path="login" element={<Login />} />

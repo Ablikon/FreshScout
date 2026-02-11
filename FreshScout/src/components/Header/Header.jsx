@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { cartStore, getCartCount, getCartTotal, openCart, openSearch, cityStore, setCity } from '../../store';
+import { cartStore, openCart, openSearch, cityStore, setCity, authStore, logout } from '../../store';
 import Icon from '../Icon/Icon';
 import s from './Header.module.css';
 
@@ -8,12 +8,19 @@ const CITIES = { almaty: 'Алматы', astana: 'Астана' };
 export default function Header() {
   const cartItems = cartStore.useStore(s => s.items);
   const city = cityStore.useStore(s => s.city);
+  const token = authStore.useStore(s => s.token);
+  const user = authStore.useStore(s => s.user);
   const count = cartItems.reduce((sum, i) => sum + i.quantity, 0);
   const total = cartItems.reduce((sum, i) => sum + i.cost * i.quantity, 0);
+  const isLoggedIn = !!token;
 
   const handleCityToggle = () => {
     setCity(city === 'almaty' ? 'astana' : 'almaty');
     window.location.reload();
+  };
+
+  const handleLogout = () => {
+    logout();
   };
 
   return (
@@ -37,9 +44,25 @@ export default function Header() {
             <span>{CITIES[city]}</span>
           </button>
 
+          {isLoggedIn && (
+            <Link to="/orders" className={s.actionBtn} title="Мои заказы">
+              <Icon name="package" size={20} />
+            </Link>
+          )}
           <Link to="/favorites" className={s.actionBtn}>
             <Icon name="heart" size={20} />
           </Link>
+          {isLoggedIn ? (
+            <button className={s.userBtn} onClick={handleLogout} title="Выйти">
+              <Icon name="user" size={18} />
+              <span className={s.userName}>{user?.name || user?.phone || 'Профиль'}</span>
+            </button>
+          ) : (
+            <Link to="/login" className={s.loginBtn}>
+              <Icon name="user" size={18} />
+              <span>Войти</span>
+            </Link>
+          )}
 
           <button className={s.cartBtn} onClick={openCart}>
             <Icon name="cart" size={18} />

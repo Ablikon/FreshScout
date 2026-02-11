@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { sendOtp, verifyOtp as verifyOtpApi } from '../../api';
+import { login as authLogin } from '../../store';
 import Icon from '../../components/Icon/Icon';
 import s from './Login.module.css';
 
@@ -11,6 +12,8 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get('redirect') || '/';
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
@@ -40,9 +43,8 @@ export default function LoginPage() {
     setError('');
     try {
       const data = await verifyOtpApi(phone, code);
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      navigate('/');
+      authLogin(data.token, data.user);
+      navigate(redirectTo);
     } catch (err) {
       setError(err.response?.data?.error || 'Неверный код');
     } finally {
@@ -55,7 +57,7 @@ export default function LoginPage() {
       <div className={s.card}>
         <div className={s.logo}><Icon name="cart" size={48} /></div>
         <h1 className={s.title}>FreshScout</h1>
-        <p className={s.subtitle}>Войдите, чтобы сохранять заказы</p>
+        <p className={s.subtitle}>Войдите, чтобы оформлять заказы</p>
 
         {step === 'phone' ? (
           <form onSubmit={handleSendOtp} className={s.form}>
@@ -69,12 +71,12 @@ export default function LoginPage() {
             />
             {error && <p className={s.error}>{error}</p>}
             <button className={s.btn} type="submit" disabled={loading}>
-              {loading ? 'Отправка...' : 'Получить код'}
+              {loading ? 'Отправка...' : 'Получить код в WhatsApp'}
             </button>
           </form>
         ) : (
           <form onSubmit={handleVerify} className={s.form}>
-            <p className={s.hint}>Код отправлен на {phone}</p>
+            <p className={s.hint}>📱 Код отправлен в WhatsApp на {phone}</p>
             <input
               className={s.input}
               type="text"

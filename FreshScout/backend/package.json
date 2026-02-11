@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "sync": "node src/scripts/syncProducts.js"
+    "sync": "node src/scripts/syncProducts.js",
+    "init-arbuz": "node -e \"import('./src/services/stores/arbuz.adapter.js').then(m => m.initArbuzSession())\"",
+    "lavka-auth": "node scripts/lavka-auth.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -15,7 +17,8 @@
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.1.5",
     "node-cron": "^3.0.3",
-    "openai": "^4.80.0"
+    "openai": "^4.80.0",
+    "puppeteer": "^24.37.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"

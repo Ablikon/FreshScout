@@ -51,4 +51,11 @@ export const updateProfile = (data) => api.put('/me', data).then(r => r.data);
 export const getOrders = () => api.get('/orders').then(r => r.data);
 export const createOrder = (data) => api.post('/orders', data).then(r => r.data);
 
+// ── Delivery ──
+export const checkDelivery = (address, city, stores, placeId) => 
+  api.post('/orders/check-delivery', { address, city, stores, placeId }).then(r => r.data);
+
+export const addressAutocomplete = (input, city) =>
+  api.get('/orders/address-autocomplete', { params: { input, city } }).then(r => r.data);
+
 export default api;

@@ -23,6 +23,8 @@ services:
         condition: service_healthy
     ports:
       - "8080:8080"
+    volumes:
+      - backend_data:/app/data
     environment:
       PORT: 8080
       MONGODB_URI: mongodb://mongo:27017/freshscout
@@ -32,8 +34,35 @@ services:
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4o-mini}
       SYNC_INTERVAL_HOURS: ${SYNC_INTERVAL_HOURS:-6}
+      # SMS Provider: "waha" | "console"
+      SMS_PROVIDER: ${SMS_PROVIDER:-waha}
+      # WAHA WhatsApp (SMS_PROVIDER=waha)
+      WAHA_API_URL: http://waha:3000
+      WAHA_SESSION: default
+      WAHA_API_KEY: freshscout_waha_key_2026
+      # Store credentials for real ordering
+      ARBUZ_PHONE: ${ARBUZ_PHONE:-+77012124422}
+      ARBUZ_TOKEN: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI4MDk2YjI4ZC05OTMwLTQ1NjItOTRjYy04Y2RlZjhmNjc5OTgiLCJpc3MiOiJNM0tBTUtEMGVzeE1RVWNJQkJuWUQ4c2wxTFVTNk9RciIsImlhdCI6MTc3MDcyMDM4MywiZXhwIjo0OTI0MzIwMzgzLCJjb25zdW1lciI6eyJpZCI6ImYxYTRkOGY5LTU1ZDctNDIzNi05YmRhLTBjZmFmNGQ2NDdjZiIsIm5hbWUiOiJhcmJ1ei1rei53ZWIuZGVza3RvcCJ9LCJ1c2VyIjp7ImlkIjoiMTQ1OTMwOCIsImF1dGgiOiIwNGUwYTk5NS02Y2YyLTQyMmMtOGVjZi0xYTllM2E2MTYzNWYifX0.KN9aEhM_IJSBzyGWSETuZ3IpYUo6LniC1rzyoga6YB0
+      # Wolt credentials (Ruslan Rahmonov account)
+      WOLT_ACCESS_TOKEN: eyJhbGciOiJFUzI1NiIsImtpZCI6IjY5ODFjOGNkMDAwMDAwMDAwMDAwMDAwMCIsInR5cCI6IngudXNlcitqd3QifQ.eyJhdWQiOlsicmVzdGF1cmFudC1hcGkiLCJjb252ZXJzZS13aWRnZXQtY29uc3VtZXIiLCJhY3Rpdml0eS1odWIiLCJpbnRlZ3JhdGlvbi1jb25maWctc2VydmljZSIsImxpc3QtZXZlcnl0aGluZy1kYXRhc3RvcmUiLCJwYXltZW50LXNlcnZpY2UiLCJlLXdhbGxldC1zZXJ2aWNlIiwicGVkcmVnYWwiLCJvcmRlci14cCIsIndvbHRhdXRoIiwiY29ycG9yYXRlLXBvcnRhbC1hcGkiLCJhZC1pbnNpZ2h0cyIsIm9yZGVyLXRyYWNraW5nIiwid29sdC1jb20iLCJjb25zdW1lci1hc3NvcnRtZW50IiwiZGFhcy1wdWJsaWMtYXBpIiwidmVudWUtY29udGVudC1hcGkiLCJkaWZmdXNpb24iLCJ3bHMtY3VzdG9tZXItc2VydmljZSIsInRvcHVwLXNlcnZpY2UiLCJnaWZ0LWNhcmQtc2hvcCIsImxveWFsdHktcHJvZ3JhbS1hcGkiLCJwYXltZW50cy10aXBzLXNlcnZpY2UiLCJsb3lhbHR5LWdhdGV3YXkiLCJyZXR1cm5zLWFwaSIsImNvdXJpZXJjbGllbnQiLCJzdXBwb3J0LWZ1bm5lbCIsIm1lYWwtYmVuZWZpdHMtc2VydmljZSIsInN1YnNjcmlwdGlvbi1zZXJ2aWNlIl0sImlzcyI6IndvbHRhdXRoIiwianRpIjoiNTg3ZmFmOGUwNjgyMTFmMTg0ZmE0MjBmZGEyNGI3NDEiLCJ1c2VyIjp7ImlkIjoiNjk4YjFmZWFjMjJlN2IzYjIzOTc0ODE2IiwibmFtZSI6eyJmaXJzdF9uYW1lIjoiUnVzbGFuIiwibGFzdF9uYW1lIjoiXHUwNDIwXHUwNDMwXHUwNDQ1XHUwNDNjXHUwNDMwXHUwNDNkXHUwNDNlXHUwNDMyIn0sImVtYWlsIjoicnVzbGFuLnVyLmt6NDU2QGdtYWlsLmNvbSIsInJvbGVzIjpbInVzZXIiXSwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBob25lX251bWJlcl92ZXJpZmllZCI6dHJ1ZSwiY291bnRyeSI6IktBWiIsInBlZHJlZ2FsX2lkIjoiMzg3N2UwOWUtYTFlOC00MjI1LTk4OGItYWZkNmIyNzY5N2Y2IiwibGFuZ3VhZ2UiOiJydSIsInBlcm1pc3Npb25zIjpbXSwicGhvbmVfbnVtYmVyIjoiKzc3MDg0OTIxNTE4IiwidGVuYW50Ijoid29sdCIsInBybiI6InBybjp2MTp3b2x0OmlkZW50aXR5OnVzZXI6Njk4YjFmZWFjMjJlN2IzYjIzOTc0ODE2In0sImlhdCI6MTc3MDcyOTIzMiwiZXhwIjoxNzcwNzMxMDMyLCJhbXIiOltdLCJzaWQiOiI2OThiMjE3NzY2M2RhYTA4NmIxZjMyZmMifQ._vgVArjgekvgTYyhuhkkja3x4m2rFolVK0TQuqgMcaEyCw4oayTT-gVngkpnZjSN0mr2i1Vr1GyjcSeZkc2P7g
+      WOLT_REFRESH_TOKEN: iy8Qyj6COZT3D79Al8hMUoBAkGYNZVU-JifrrI3brX-R2Kg
 
-  # ── Frontend (nginx) ──
+  # ── WAHA (WhatsApp HTTP API) ──
+  waha:
+    image: devlikeapro/waha
+    platform: linux/amd64
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      WHATSAPP_DEFAULT_ENGINE: NOWEB
+      WAHA_PRINT_QR: true
+      WHATSAPP_RESTART_ALL_SESSIONS: true
+      WHATSAPP_API_KEY: freshscout_waha_key_2026
+    volumes:
+      - waha_data:/app/.sessions
+
+  # ── Frontend  ──
   frontend:
     build:
       context: .
@@ -45,3 +74,5 @@ services:
 
 volumes:
   mongo_data:
+  waha_data:
+  backend_data:

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { cartStore, updateQuantity, clearCart } from '../../store';
 import Icon from '../../components/Icon/Icon';
 import STORE_ICONS from '../../components/Icon/storeIcons';
@@ -14,6 +14,7 @@ const STORE_NAMES = {
 
 export default function CartPage() {
   const items = cartStore.useStore(s => s.items);
+  const navigate = useNavigate();
 
   if (items.length === 0) {
     return (
@@ -230,7 +231,7 @@ export default function CartPage() {
           <span>Итого</span>
           <span>{total.toLocaleString()} ₸</span>
         </div>
-        <button className={s.checkoutBtn}>
+        <button className={s.checkoutBtn} onClick={() => navigate('/checkout')}>
           <Icon name="cart" size={20} />
           Оформить заказ — {total.toLocaleString()} ₸
         </button>

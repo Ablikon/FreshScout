@@ -1,5 +1,6 @@
 import Order from '../models/Order.js';
 import User from '../models/User.js';
+import { placeStoreOrders } from '../services/storeProxy.service.js';
 
 /**
  * GET /api/me
@@ -61,17 +62,68 @@ export async function getOrders(req, res) {
  */
 export async function createOrder(req, res) {
   try {
-    const { items, storeBreakdown, total, savings, city } = req.body;
+    const {
+      items, total, savings, city,
+      address, apartment, entrance, floor, comment,
+      contactName, contactPhone, paymentMethod,
+    } = req.body;
+
+    if (!address || !contactName || !contactPhone) {
+      return res.status(400).json({ error: 'Заполните адрес и контактные данные' });
+    }
+    if (!items || items.length === 0) {
+      return res.status(400).json({ error: 'Корзина пуста' });
+    }
+
+    // Group items by store → subOrders
+    const byStore = {};
+    for (const item of items) {
+      const st = item.store;
+      if (!byStore[st]) {
+        byStore[st] = { store: st, storeName: item.storeName, items: [], subtotal: 0 };
+      }
+      byStore[st].items.push({
+        productId: item.productId || item._id,
+        title: item.title,
+        cost: item.cost,
+        quantity: item.quantity,
+        imageUrl: item.imageUrl,
+        measure: item.measure,
+        url: item.url,
+      });
+      byStore[st].subtotal += item.cost * item.quantity;
+    }
+
+    const subOrders = Object.values(byStore).map(g => ({
+      ...g,
+      status: 'pending',
+    }));
+
     const order = await Order.create({
       userId: req.userId,
-      items,
-      storeBreakdown,
+      address,
+      apartment: apartment || '',
+      entrance: entrance || '',
+      floor: floor || '',
+      comment: comment || '',
+      contactName,
+      contactPhone,
+      paymentMethod: paymentMethod || 'cash',
+      subOrders,
       total,
-      savings,
-      city,
+      savings: savings || 0,
+      city: city || 'almaty',
+      status: 'pending',
     });
+
+    // Trigger store proxy ordering in background (don't await — return order immediately)
+    placeStoreOrders(order).catch(err => {
+      console.error('Store proxy error:', err);
+    });
+
     res.status(201).json({ order });
   } catch (error) {
-    res.status(500).json({ error: 'Ошибка сервера' });
+    console.error('createOrder error:', error);
+    res.status(500).json({ error: 'Ошибка создания заказа' });
   }
 }
