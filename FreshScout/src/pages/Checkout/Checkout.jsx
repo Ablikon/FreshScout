@@ -228,65 +228,25 @@ export default function Checkout() {
   const comparedItems = items.filter(i => i.maxPrice && i.maxPrice > i.cost).length;
   const uniqueStores = Object.keys(byStore);
 
+  const [showFrozenModal, setShowFrozenModal] = useState(false);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-
-    if (!address.trim()) { setError('Укажите адрес доставки'); return; }
-    if (!contactName.trim()) { setError('Укажите имя получателя'); return; }
-    if (!contactPhone.trim()) { setError('Укажите телефон получателя'); return; }
-
-    setLoading(true);
-    try {
-      const orderData = {
-        items: items.map(i => ({
-          _id: i._id,
-          productId: i.productId || i._id,
-          name: i.title,
-          title: i.title,
-          price: i.cost,
-          cost: i.cost,
-          quantity: i.quantity,
-          image: i.imageUrl,
-          imageUrl: i.imageUrl,
-          measure: i.measure,
-          url: i.url,
-          store: i.store,
-          storeName: i.storeName,
-        })),
-        total,
-        savings: totalSavings,
-        city: localStorage.getItem('city') || 'almaty',
-        address: address.trim(),
-        apartment: apartment.trim(),
-        entrance: entrance.trim(),
-        floor: floor.trim(),
-        comment: comment.trim(),
-        contactName: contactName.trim(),
-        contactPhone: contactPhone.trim(),
-        paymentMethod,
-        // Enable real ordering to external stores
-        placeRealOrders: true,
-      };
-
-      await createOrder(orderData);
-      clearCart();
-      navigate('/orders?new=1');
-    } catch (err) {
-      if (err.response?.status === 401) {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        navigate('/login?redirect=/checkout');
-        return;
-      }
-      setError(err.response?.data?.error || 'Ошибка при оформлении заказа');
-    } finally {
-      setLoading(false);
-    }
+    setShowFrozenModal(true);
   };
 
   return (
     <div className={s.page}>
+      {showFrozenModal && (
+        <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.4)',zIndex:9999,display:'flex',alignItems:'center',justifyContent:'center'}} onClick={() => setShowFrozenModal(false)}>
+          <div style={{background:'#fff',borderRadius:16,padding:'32px 28px',maxWidth:360,textAlign:'center',boxShadow:'0 8px 32px rgba(0,0,0,0.15)'}} onClick={e => e.stopPropagation()}>
+            <div style={{fontSize:48,marginBottom:12}}>🚫</div>
+            <h2 style={{fontSize:20,fontWeight:700,marginBottom:8}}>Рустам сказал пока нельзя</h2>
+            <p style={{color:'#888',fontSize:14,marginBottom:20}}>Функция оформления заказа временно отключена</p>
+            <button onClick={() => setShowFrozenModal(false)} style={{background:'#009DE0',color:'#fff',border:'none',borderRadius:8,padding:'10px 28px',fontSize:15,fontWeight:600,cursor:'pointer'}}>Понятно</button>
+          </div>
+        </div>
+      )}
       <div className={s.headerRow}>
         <Link to="/cart" className={s.backLink}>
           <Icon name="chevron-left" size={20} />

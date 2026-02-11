@@ -2,11 +2,10 @@ services:
   # ── MongoDB ──
   mongo:
     image: mongo:7
+    container_name: freshscout_mongo
     restart: unless-stopped
     volumes:
       - mongo_data:/data/db
-    ports:
-      - "27017:27017"
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -17,12 +16,11 @@ services:
   backend:
     build:
       context: ./backend
+    container_name: freshscout_backend
     restart: unless-stopped
     depends_on:
       mongo:
         condition: service_healthy
-    ports:
-      - "8080:8080"
     volumes:
       - backend_data:/app/data
     environment:
@@ -50,10 +48,11 @@ services:
   # ── WAHA (WhatsApp HTTP API) ──
   waha:
     image: devlikeapro/waha
+    container_name: freshscout_waha
     platform: linux/amd64
     restart: unless-stopped
     ports:
-      - "3001:3000"
+      - "3002:3000"
     environment:
       WHATSAPP_DEFAULT_ENGINE: NOWEB
       WAHA_PRINT_QR: true
@@ -66,11 +65,12 @@ services:
   frontend:
     build:
       context: .
+    container_name: freshscout_frontend
     restart: unless-stopped
     depends_on:
       - backend
     ports:
-      - "3000:80"
+      - "3001:80"
 
 volumes:
   mongo_data:
